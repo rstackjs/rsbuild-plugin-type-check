@@ -14,7 +14,7 @@ An Rsbuild plugin to run TypeScript type checker in a separate process.
 
 ## Introduction
 
-This plugin internally integrates with [ts-checker-rspack-plugin](https://github.com/rspack-contrib/ts-checker-rspack-plugin).
+This plugin internally integrates with [ts-checker-rspack-plugin](https://github.com/rstackjs/ts-checker-rspack-plugin).
 
 The type checking logic of `ts-checker-rspack-plugin` is similar to the native `tsc` command of TypeScript. It automatically reads the configuration options from `tsconfig.json` and can also be modified via the configuration options provided by the Type Check plugin.
 
@@ -100,7 +100,7 @@ pluginTypeCheck({
 
 ### tsCheckerOptions
 
-Modify the options of `ts-checker-rspack-plugin`, please refer to [ts-checker-rspack-plugin - README](https://github.com/rspack-contrib/ts-checker-rspack-plugin#readme) to learn about available options.
+Modify the options of `ts-checker-rspack-plugin`, please refer to [ts-checker-rspack-plugin - README](https://github.com/rstackjs/ts-checker-rspack-plugin#readme) to learn about available options.
 
 - **Type:** `Object | Function`
 - **Default:**

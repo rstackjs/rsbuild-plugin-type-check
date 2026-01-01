@@ -20,7 +20,7 @@ export type PluginTypeCheckerOptions = {
   enable?: boolean;
   /**
    * To modify the options of `ts-checker-rspack-plugin`.
-   * @see https://github.com/rspack-contrib/ts-checker-rspack-plugin#readme
+   * @see https://github.com/rstackjs/ts-checker-rspack-plugin#readme
    */
   tsCheckerOptions?: ConfigChain<TsCheckerOptions>;
   /**
