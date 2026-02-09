@@ -213,7 +213,9 @@ pluginTypeCheck({
 
 ## Performance Optimization
 
-Type checking has a significant performance overhead. You can refer to the [Performance Guide](https://github.com/microsoft/TypeScript/wiki/Performance) in the official TypeScript documentation for performance optimization.
+This plugin delegates type checking to TypeScript, so overall performance is mostly determined by `tsc` itself.
+
+If you need faster type checks, start by optimizing your TypeScript setup using the [official TypeScript performance guide](https://github.com/microsoft/TypeScript/wiki/Performance).
 
 For example, properly configuring the `include` and `exclude` scopes in `tsconfig.json` can significantly reduce unnecessary type checking and improve TypeScript performance:
 
