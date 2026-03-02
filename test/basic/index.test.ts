@@ -1,5 +1,6 @@
 import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { stripVTControlCharacters } from 'node:util';
 import { expect, test } from '@playwright/test';
 import { createRsbuild } from '@rsbuild/core';
 import { pluginTypeCheck } from '@rsbuild/plugin-type-check';
@@ -78,6 +79,7 @@ test('should throw error when exist type errors in dev mode', async ({
 test('should display error in overlay when exist type errors in dev mode', async ({
   page,
 }) => {
+  process.env.NODE_ENV = 'development';
   const { restore } = proxyConsole();
 
   const rsbuild = await createRsbuild({
@@ -96,16 +98,20 @@ test('should display error in overlay when exist type errors in dev mode', async
 
   await page.goto(urls[0]);
 
-  const errorOverlay = page.locator('rsbuild-error-overlay');
+  const OVERLAY_ID = 'rsbuild-error-overlay';
+  await page.waitForSelector(OVERLAY_ID, { state: 'attached' });
+  const errorOverlay = page.locator(OVERLAY_ID);
 
+  const overlayContent = await errorOverlay.locator('.content').allInnerTexts();
   expect(
-    (await errorOverlay.locator('.content').allInnerTexts()).find((txt) =>
-      txt.includes('TS2345: Argument of type'),
+    overlayContent.find((txt) =>
+      stripVTControlCharacters(txt).includes('TS2345: Argument of type'),
     ),
   ).toBeDefined();
 
   restore();
   await server.close();
+  process.env.NODE_ENV = 'test';
 });
 
 test('should not throw error when the file is excluded', async () => {
