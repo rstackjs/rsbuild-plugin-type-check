@@ -43,8 +43,8 @@
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
     "@playwright/test": "^1.58.2",
-    "@rsbuild/core": "^2.0.0-beta.7",
-    "@rslib/core": "^0.19.6",
+    "@rsbuild/core": "^2.0.0-canary-20260309140114",
+    "@rslib/core": "^0.20.0",
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^24.12.0",
     "fs-extra": "^11.3.4",
@@ -61,7 +61,7 @@
       "optional": true
     }
   },
-  "packageManager": "pnpm@10.31.0",
+  "packageManager": "pnpm@10.32.1",
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
