@@ -43,15 +43,15 @@
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
     "@playwright/test": "^1.59.1",
-    "@rsbuild/core": "^2.0.0-rc.2",
-    "@rslib/core": "^0.21.0",
+    "@rsbuild/core": "^2.0.0-rc.4",
+    "@rslib/core": "^0.21.2",
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^24.12.2",
     "fs-extra": "^11.3.4",
     "nano-staged": "^1.0.2",
     "playwright": "^1.59.1",
     "simple-git-hooks": "^2.13.1",
-    "typescript": "^6.0.2"
+    "typescript": "^6.0.3"
   },
   "peerDependencies": {
     "@rsbuild/core": "^1.0.0 || ^2.0.0-0"
