@@ -83,7 +83,7 @@ export const pluginTypeCheck = (
             typescriptPath = require.resolve('typescript', {
               paths: [api.context.rootPath],
             });
-          } catch (err) {
+          } catch {
             logger.warn(
               '"typescript" is not found in current project, Type checker will not work.',
             );

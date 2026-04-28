@@ -35,7 +35,7 @@ Add plugin to your `rsbuild.config.ts`:
 
 ```ts
 // rsbuild.config.ts
-import { pluginTypeCheck } from "@rsbuild/plugin-type-check";
+import { pluginTypeCheck } from '@rsbuild/plugin-type-check';
 
 export default {
   plugins: [pluginTypeCheck()],
@@ -86,7 +86,7 @@ Enable type checking only in production mode:
 
 ```js
 pluginTypeCheck({
-  enable: process.env.NODE_ENV === "production",
+  enable: process.env.NODE_ENV === 'production',
 });
 ```
 
@@ -94,7 +94,7 @@ Enable type checking only in development mode (it is not recommended to disable 
 
 ```js
 pluginTypeCheck({
-  enable: process.env.NODE_ENV === "development",
+  enable: process.env.NODE_ENV === 'development',
 });
 ```
 
@@ -110,7 +110,7 @@ const defaultOptions = {
   typescript: {
     // set 'readonly' to avoid emitting tsbuildinfo,
     // as the generated tsbuildinfo will break ts-checker-rspack-plugin
-    mode: "readonly",
+    mode: 'readonly',
     // enable build when using project reference
     build: useReference,
     // avoid OOM issue
@@ -118,11 +118,11 @@ const defaultOptions = {
     // use tsconfig of user project
     configFile: tsconfigPath,
     // use typescript of user project
-    typescriptPath: require.resolve("typescript"),
+    typescriptPath: require.resolve('typescript'),
   },
   issue: {
     // ignore types errors from node_modules
-    exclude: [({ file = "" }) => /[\\/]node_modules[\\/]/.test(file)],
+    exclude: [({ file = '' }) => /[\\/]node_modules[\\/]/.test(file)],
   },
   logger: {
     log() {
@@ -130,7 +130,7 @@ const defaultOptions = {
       // we only want to display error messages
     },
     error(message: string) {
-      console.error(message.replace(/ERROR/g, "Type Error"));
+      console.error(message.replace(/ERROR/g, 'Type Error'));
     },
   },
 };
@@ -144,7 +144,7 @@ When the value of `tsCheckerOptions` is an object, it will be deeply merged with
 pluginTypeCheck({
   tsCheckerOptions: {
     issue: {
-      exclude: [({ file = "" }) => /[\\/]some-folder[\\/]/.test(file)],
+      exclude: [({ file = '' }) => /[\\/]some-folder[\\/]/.test(file)],
     },
   },
 });
@@ -174,7 +174,7 @@ pluginTypeCheck({
   tsCheckerOptions: {
     issue: {
       // Ignore "Argument of type 'string' is not assignable to parameter of type 'number'.ts(2345)"
-      exclude: [{ code: "TS2345" }],
+      exclude: [{ code: 'TS2345' }],
     },
   },
 });
@@ -186,7 +186,7 @@ Or exclude files under `/some-folder/` using `file`:
 pluginTypeCheck({
   tsCheckerOptions: {
     issue: {
-      exclude: [({ file = "" }) => /[\\/]some-folder[\\/]/.test(file)],
+      exclude: [({ file = '' }) => /[\\/]some-folder[\\/]/.test(file)],
     },
   },
 });
@@ -206,6 +206,7 @@ pluginTypeCheck({
   },
 });
 ```
+
 ## Notes
 
 - If you have enabled `ts-loader` in your project and manually configured `compileOnly: false`, please disable the Type Check plugin to avoid duplicate type checking.
@@ -238,8 +239,8 @@ npm add @esctn/vue-tsc-api -D
 pluginTypeCheck({
   tsCheckerOptions: {
     typescript: {
-      typescriptPath: '@esctn/vue-tsc-api'
-    }
+      typescriptPath: '@esctn/vue-tsc-api',
+    },
   },
 });
 ```
