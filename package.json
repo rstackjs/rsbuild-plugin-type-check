@@ -37,9 +37,9 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.59.1",
-    "@rsbuild/core": "^2.0.1",
+    "@rsbuild/core": "^2.0.3",
     "@rslib/core": "^0.21.3",
-    "@rslint/core": "^0.5.0",
+    "@rslint/core": "^0.5.1",
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^24.12.2",
     "fs-extra": "^11.3.4",
