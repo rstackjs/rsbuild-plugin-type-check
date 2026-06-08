@@ -139,36 +139,23 @@ export const pluginTypeCheck = (
             },
           };
 
-          let mergedOptions = defaultOptions;
-          let useDefaultTypescriptPath = true;
-          const tsCheckerOptionChain = Array.isArray(tsCheckerOptions)
-            ? tsCheckerOptions
-            : tsCheckerOptions
-              ? [tsCheckerOptions]
-              : [];
+          const mergedOptions = reduceConfigs({
+            initial: defaultOptions,
+            config: tsCheckerOptions,
+            mergeFn: deepmerge,
+          });
 
-          for (const config of tsCheckerOptionChain) {
-            mergedOptions = reduceConfigs({
-              initial: mergedOptions,
-              config,
-              mergeFn: deepmerge,
-            });
-
-            const { typescriptPath } = mergedOptions.typescript ?? {};
-            if (
-              typescriptPath &&
-              typescriptPath !== projectTypescriptPath &&
-              typescriptPath !== projectTsgoPath
-            ) {
-              useDefaultTypescriptPath = false;
-            }
-
-            if (mergedOptions.typescript && useDefaultTypescriptPath) {
-              mergedOptions.typescript.typescriptPath = mergedOptions.typescript
-                .tsgo
-                ? projectTsgoPath
-                : projectTypescriptPath;
-            }
+          // Switch only the plugin-provided default path after user options are merged.
+          if (
+            mergedOptions.typescript &&
+            (mergedOptions.typescript.typescriptPath ===
+              projectTypescriptPath ||
+              mergedOptions.typescript.typescriptPath === projectTsgoPath)
+          ) {
+            mergedOptions.typescript.typescriptPath = mergedOptions.typescript
+              .tsgo
+              ? projectTsgoPath
+              : projectTypescriptPath;
           }
 
           if (

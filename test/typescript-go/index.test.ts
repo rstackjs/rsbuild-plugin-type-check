@@ -69,33 +69,3 @@ test('should respect issue exclude when using typescript-go', async () => {
     restore();
   }
 });
-
-test('should provide native preview path in default options when using typescript-go', async () => {
-  let typescriptPath: string | undefined;
-
-  const rsbuild = await createRsbuild({
-    cwd: __dirname,
-    rsbuildConfig: {
-      plugins: [
-        pluginTypeCheck({
-          tsCheckerOptions: [
-            {
-              typescript: {
-                tsgo: true,
-              },
-            },
-            (options) => {
-              typescriptPath = options.typescript?.typescriptPath;
-              return options;
-            },
-          ],
-        }),
-      ],
-    },
-  });
-
-  await expect(rsbuild.build()).rejects.toThrowError('build failed');
-  expect(typescriptPath?.replace(/\\/g, '/')).toContain(
-    '/@typescript/native-preview/package.json',
-  );
-});

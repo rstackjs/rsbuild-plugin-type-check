@@ -141,7 +141,9 @@ const defaultOptions = {
 
 #### TypeScript Go support
 
-To enable experimental TypeScript Go support, install `@typescript/native-preview` and set `typescript.tsgo` to `true`:
+TypeScript Go support is powered by `ts-checker-rspack-plugin`'s experimental, CLI-based integration for [typescript-go](https://github.com/microsoft/typescript-go). It runs the `tsgo` binary for type checking and can reduce type-checking time by about 5-10x.
+
+To enable it, install `@typescript/native-preview` and set `typescript.tsgo` to `true`:
 
 ```ts
 pluginTypeCheck({
@@ -153,7 +155,9 @@ pluginTypeCheck({
 });
 ```
 
-When `tsgo` is enabled, the default `typescript.typescriptPath` resolves to `@typescript/native-preview/package.json`. In `tsgo` mode, `typescript.typescriptPath` must be an absolute path to `@typescript/native-preview/package.json`. For more usage details and limitations, see [ts-checker-rspack-plugin - TypeScript Go support](https://github.com/rstackjs/ts-checker-rspack-plugin#typescript-go-support).
+When `tsgo` is enabled, the default `typescript.typescriptPath` resolves to `@typescript/native-preview/package.json`. If you set `typescript.typescriptPath` manually in `tsgo` mode, it must be an absolute path to `@typescript/native-preview/package.json`.
+
+For supported options and limitations, see [ts-checker-rspack-plugin - TypeScript Go support](https://github.com/rstackjs/ts-checker-rspack-plugin#typescript-go-support).
 
 #### Object Type
 
