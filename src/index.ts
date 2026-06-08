@@ -12,6 +12,19 @@ type TsCheckerOptions = NonNullable<
   ConstructorParameters<typeof TsCheckerRspackPlugin>[0]
 >;
 
+const resolveProjectPackage = (
+  packageName: string,
+  rootPath: string,
+): string | undefined => {
+  try {
+    return require.resolve(packageName, {
+      paths: [rootPath],
+    });
+  } catch {
+    return undefined;
+  }
+};
+
 export type PluginTypeCheckerOptions = {
   /**
    * Whether to enable TypeScript type checking.
@@ -77,24 +90,20 @@ export const pluginTypeCheck = (
           }
           checkedTsconfig.set(tsconfigPath, environment.name);
 
-          // use typescript of user project
-          let typescriptPath: string;
-          try {
-            typescriptPath = require.resolve('typescript', {
-              paths: [api.context.rootPath],
-            });
-          } catch {
-            logger.warn(
-              '"typescript" is not found in current project, Type checker will not work.',
-            );
-            return;
-          }
-
           const { references } = json5.parse(
             fs.readFileSync(tsconfigPath, 'utf-8'),
           );
           const useReference =
             Array.isArray(references) && references.length > 0;
+          // use typescript of user project
+          const projectTypescriptPath = resolveProjectPackage(
+            'typescript',
+            api.context.rootPath,
+          );
+          const projectTsgoPath = resolveProjectPackage(
+            '@typescript/native-preview/package.json',
+            api.context.rootPath,
+          );
 
           const defaultOptions: TsCheckerOptions = {
             typescript: {
@@ -107,8 +116,9 @@ export const pluginTypeCheck = (
               memoryLimit: 8192,
               // use tsconfig of user project
               configFile: tsconfigPath,
+              tsgo: false,
               // use typescript of user project
-              typescriptPath,
+              typescriptPath: projectTypescriptPath,
             },
             issue: {
               // ignore types errors from node_modules
@@ -129,11 +139,50 @@ export const pluginTypeCheck = (
             },
           };
 
-          const mergedOptions = reduceConfigs({
-            initial: defaultOptions,
-            config: tsCheckerOptions,
-            mergeFn: deepmerge,
-          });
+          let mergedOptions = defaultOptions;
+          let useDefaultTypescriptPath = true;
+          const tsCheckerOptionChain = Array.isArray(tsCheckerOptions)
+            ? tsCheckerOptions
+            : tsCheckerOptions
+              ? [tsCheckerOptions]
+              : [];
+
+          for (const config of tsCheckerOptionChain) {
+            mergedOptions = reduceConfigs({
+              initial: mergedOptions,
+              config,
+              mergeFn: deepmerge,
+            });
+
+            const { typescriptPath } = mergedOptions.typescript ?? {};
+            if (
+              typescriptPath &&
+              typescriptPath !== projectTypescriptPath &&
+              typescriptPath !== projectTsgoPath
+            ) {
+              useDefaultTypescriptPath = false;
+            }
+
+            if (mergedOptions.typescript && useDefaultTypescriptPath) {
+              mergedOptions.typescript.typescriptPath = mergedOptions.typescript
+                .tsgo
+                ? projectTsgoPath
+                : projectTypescriptPath;
+            }
+          }
+
+          if (
+            mergedOptions.typescript &&
+            !mergedOptions.typescript.typescriptPath
+          ) {
+            const typeCheckerPackage = mergedOptions.typescript.tsgo
+              ? '@typescript/native-preview'
+              : 'typescript';
+            logger.warn(
+              `"${typeCheckerPackage}" is not found in current project, Type checker will not work.`,
+            );
+            return;
+          }
 
           if (isProd) {
             logger.info('Type checker is enabled. It may take some time.');

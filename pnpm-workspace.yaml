@@ -1,3 +1,5 @@
 allowBuilds:
   core-js: false
   simple-git-hooks: false
+minimumReleaseAgeExclude:
+  - ts-checker-rspack-plugin@1.4.0

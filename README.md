@@ -117,8 +117,11 @@ const defaultOptions = {
     memoryLimit: 8192,
     // use tsconfig of user project
     configFile: tsconfigPath,
+    tsgo: false,
     // use typescript of user project
-    typescriptPath: require.resolve('typescript'),
+    typescriptPath: tsgo
+      ? require.resolve('@typescript/native-preview/package.json')
+      : require.resolve('typescript'),
   },
   issue: {
     // ignore types errors from node_modules
@@ -135,6 +138,22 @@ const defaultOptions = {
   },
 };
 ```
+
+#### TypeScript Go support
+
+To enable experimental TypeScript Go support, install `@typescript/native-preview` and set `typescript.tsgo` to `true`:
+
+```ts
+pluginTypeCheck({
+  tsCheckerOptions: {
+    typescript: {
+      tsgo: true,
+    },
+  },
+});
+```
+
+When `tsgo` is enabled, the default `typescript.typescriptPath` resolves to `@typescript/native-preview/package.json`. In `tsgo` mode, `typescript.typescriptPath` must be an absolute path to `@typescript/native-preview/package.json`. For more usage details and limitations, see [ts-checker-rspack-plugin - TypeScript Go support](https://github.com/rstackjs/ts-checker-rspack-plugin#typescript-go-support).
 
 #### Object Type
 
