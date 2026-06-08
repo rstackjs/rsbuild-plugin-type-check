@@ -145,17 +145,13 @@ export const pluginTypeCheck = (
             mergeFn: deepmerge,
           });
 
-          // Switch only the plugin-provided default path after user options are merged.
+          // Switch the plugin-provided TypeScript path for tsgo after user options are merged.
           if (
             mergedOptions.typescript &&
-            (mergedOptions.typescript.typescriptPath ===
-              projectTypescriptPath ||
-              mergedOptions.typescript.typescriptPath === projectTsgoPath)
+            mergedOptions.typescript.tsgo &&
+            mergedOptions.typescript.typescriptPath === projectTypescriptPath
           ) {
-            mergedOptions.typescript.typescriptPath = mergedOptions.typescript
-              .tsgo
-              ? projectTsgoPath
-              : projectTypescriptPath;
+            mergedOptions.typescript.typescriptPath = projectTsgoPath;
           }
 
           if (
