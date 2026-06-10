@@ -117,6 +117,7 @@ const defaultOptions = {
     memoryLimit: 8192,
     // use tsconfig of user project
     configFile: tsconfigPath,
+    // use TypeScript checker by default
     tsgo: false,
     // use typescript of user project
     typescriptPath: tsgo
