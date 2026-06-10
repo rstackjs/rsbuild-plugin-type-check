@@ -168,7 +168,11 @@ export const pluginTypeCheck = (
           }
 
           if (isProd) {
-            logger.info('Type checker is enabled. It may take some time.');
+            logger.info(
+              mergedOptions.typescript?.tsgo
+                ? 'Type checker is enabled.'
+                : 'Type checker is enabled. It may take some time. You can enable `typescript.tsgo` to speed up type checking.',
+            );
           }
 
           chain
