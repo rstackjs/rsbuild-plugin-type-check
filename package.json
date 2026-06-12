@@ -34,7 +34,7 @@
   "dependencies": {
     "deepmerge": "^4.3.1",
     "json5": "^2.2.3",
-    "reduce-configs": "^1.1.2",
+    "reduce-configs": "^2.0.1",
     "ts-checker-rspack-plugin": "^1.4.0"
   },
   "devDependencies": {
