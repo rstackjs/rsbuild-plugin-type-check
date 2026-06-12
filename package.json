@@ -2,6 +2,10 @@
   "name": "@rsbuild/plugin-type-check",
   "version": "1.4.0",
   "repository": "https://github.com/rstackjs/rsbuild-plugin-type-check",
+  "homepage": "https://github.com/rstackjs/rsbuild-plugin-type-check#readme",
+  "bugs": {
+    "url": "https://github.com/rstackjs/rsbuild-plugin-type-check/issues"
+  },
   "license": "MIT",
   "type": "module",
   "exports": {
