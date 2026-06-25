@@ -1,3 +1,7 @@
+packages:
+  - .
+  - test/typescript-v7-rc
+
 allowBuilds:
   core-js: false
   simple-git-hooks: false

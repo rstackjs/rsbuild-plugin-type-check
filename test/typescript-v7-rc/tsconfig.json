@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["DOM", "ESNext"],
+    "module": "ES2020",
+    "strict": true,
+    "isolatedModules": true,
+    "skipLibCheck": true,
+    "moduleResolution": "Bundler",
+    "types": []
+  },
+  "include": ["src"]
+}

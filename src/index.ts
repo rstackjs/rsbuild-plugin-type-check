@@ -11,7 +11,11 @@ const require = createRequire(import.meta.url);
 type TsCheckerOptions = NonNullable<
   ConstructorParameters<typeof TsCheckerRspackPlugin>[0]
 >;
+type TypeScriptGoPackage = 'typescript' | 'preview';
 type TypeScriptOptions = NonNullable<TsCheckerOptions['typescript']>;
+type TypeScriptOptionsWithTsgoPackage = TypeScriptOptions & {
+  tsgoPackage?: TypeScriptGoPackage;
+};
 
 type ProjectTypeScriptPaths = {
   typescriptPath?: string;
@@ -94,6 +98,8 @@ const applyTypeScriptPathCompat = (
   }
 
   const configuredPath = typescriptOptions.typescriptPath;
+  const normalizedOptions =
+    typescriptOptions as TypeScriptOptionsWithTsgoPackage;
 
   if (
     typescriptOptions.tsgo === false &&
@@ -109,6 +115,8 @@ const applyTypeScriptPathCompat = (
       configuredPath === TYPESCRIPT_PACKAGE_JSON)
   ) {
     typescriptOptions.typescriptPath = projectPaths.packageJsonPath;
+    typescriptOptions.tsgo ??= true;
+    normalizedOptions.tsgoPackage ??= 'typescript';
   } else if (
     typescriptOptions.tsgo &&
     !projectPaths.supportsTsgo &&
@@ -117,6 +125,7 @@ const applyTypeScriptPathCompat = (
       configuredPath === TYPESCRIPT_PACKAGE)
   ) {
     typescriptOptions.typescriptPath = projectPaths.previewPackageJsonPath;
+    normalizedOptions.tsgoPackage ??= 'preview';
   }
 
   return (
