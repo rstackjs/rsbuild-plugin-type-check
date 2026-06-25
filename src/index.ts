@@ -11,6 +11,20 @@ const require = createRequire(import.meta.url);
 type TsCheckerOptions = NonNullable<
   ConstructorParameters<typeof TsCheckerRspackPlugin>[0]
 >;
+type TypeScriptOptions = NonNullable<TsCheckerOptions['typescript']>;
+
+type ProjectTypeScriptPaths = {
+  typescriptPath?: string;
+  packageJsonPath?: string;
+  previewPackageJsonPath?: string;
+  supportsTsgo: boolean;
+  defaultPath?: string;
+};
+
+const TYPESCRIPT_PACKAGE = 'typescript';
+const TYPESCRIPT_PACKAGE_JSON = `${TYPESCRIPT_PACKAGE}/package.json`;
+const TYPESCRIPT_PREVIEW_PACKAGE = '@typescript/native-preview';
+const TYPESCRIPT_PREVIEW_PACKAGE_JSON = `${TYPESCRIPT_PREVIEW_PACKAGE}/package.json`;
 
 const resolveProjectPackage = (
   packageName: string,
@@ -23,6 +37,93 @@ const resolveProjectPackage = (
   } catch {
     return undefined;
   }
+};
+
+const isTypeScriptGoSupportedPackage = (
+  packageJsonPath: string | undefined,
+): boolean => {
+  if (!packageJsonPath) {
+    return false;
+  }
+
+  try {
+    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
+    const version =
+      typeof packageJson.version === 'string' ? packageJson.version : '';
+    const versionMatch = version.match(/^(\d+)\.(\d+)(?:\.|$|-)/);
+
+    return (
+      packageJson.name === TYPESCRIPT_PACKAGE &&
+      Boolean(versionMatch) &&
+      Number(versionMatch[1]) >= 7
+    );
+  } catch {
+    return false;
+  }
+};
+
+const resolveProjectTypeScriptPaths = (
+  rootPath: string,
+): ProjectTypeScriptPaths => {
+  const typescriptPath = resolveProjectPackage(TYPESCRIPT_PACKAGE, rootPath);
+  const packageJsonPath = resolveProjectPackage(
+    TYPESCRIPT_PACKAGE_JSON,
+    rootPath,
+  );
+  const previewPackageJsonPath = resolveProjectPackage(
+    TYPESCRIPT_PREVIEW_PACKAGE_JSON,
+    rootPath,
+  );
+  const supportsTsgo = isTypeScriptGoSupportedPackage(packageJsonPath);
+
+  return {
+    typescriptPath,
+    packageJsonPath,
+    previewPackageJsonPath,
+    supportsTsgo,
+    defaultPath: supportsTsgo ? packageJsonPath : typescriptPath,
+  };
+};
+
+const applyTypeScriptPathCompat = (
+  typescriptOptions: TypeScriptOptions | undefined,
+  projectPaths: ProjectTypeScriptPaths,
+): boolean => {
+  if (!typescriptOptions) {
+    return false;
+  }
+
+  const configuredPath = typescriptOptions.typescriptPath;
+
+  if (
+    typescriptOptions.tsgo === false &&
+    configuredPath === projectPaths.packageJsonPath
+  ) {
+    typescriptOptions.typescriptPath = projectPaths.typescriptPath;
+  } else if (
+    typescriptOptions.tsgo !== false &&
+    projectPaths.supportsTsgo &&
+    (configuredPath === projectPaths.typescriptPath ||
+      configuredPath === projectPaths.packageJsonPath ||
+      configuredPath === TYPESCRIPT_PACKAGE ||
+      configuredPath === TYPESCRIPT_PACKAGE_JSON)
+  ) {
+    typescriptOptions.typescriptPath = projectPaths.packageJsonPath;
+  } else if (
+    typescriptOptions.tsgo &&
+    !projectPaths.supportsTsgo &&
+    (!configuredPath ||
+      configuredPath === projectPaths.typescriptPath ||
+      configuredPath === TYPESCRIPT_PACKAGE)
+  ) {
+    typescriptOptions.typescriptPath = projectPaths.previewPackageJsonPath;
+  }
+
+  return (
+    Boolean(typescriptOptions.tsgo) ||
+    (typescriptOptions.tsgo !== false &&
+      isTypeScriptGoSupportedPackage(typescriptOptions.typescriptPath))
+  );
 };
 
 export type PluginTypeCheckerOptions = {
@@ -95,13 +196,7 @@ export const pluginTypeCheck = (
           );
           const useReference =
             Array.isArray(references) && references.length > 0;
-          // use typescript of user project
-          const projectTypescriptPath = resolveProjectPackage(
-            'typescript',
-            api.context.rootPath,
-          );
-          const projectTsgoPath = resolveProjectPackage(
-            '@typescript/native-preview/package.json',
+          const projectTypescriptPaths = resolveProjectTypeScriptPaths(
             api.context.rootPath,
           );
 
@@ -116,9 +211,9 @@ export const pluginTypeCheck = (
               memoryLimit: 8192,
               // use tsconfig of user project
               configFile: tsconfigPath,
-              tsgo: false,
-              // use typescript of user project
-              typescriptPath: projectTypescriptPath,
+              // use TypeScript of user project.
+              // TypeScript 7+ must point to package.json.
+              typescriptPath: projectTypescriptPaths.defaultPath,
             },
             issue: {
               // ignore types errors from node_modules
@@ -145,22 +240,16 @@ export const pluginTypeCheck = (
             mergeFn: deepmerge,
           });
 
-          // Switch the plugin-provided TypeScript path for tsgo after user options are merged.
-          if (
-            mergedOptions.typescript &&
-            mergedOptions.typescript.tsgo &&
-            mergedOptions.typescript.typescriptPath === projectTypescriptPath
-          ) {
-            mergedOptions.typescript.typescriptPath = projectTsgoPath;
-          }
+          const typescriptOptions = mergedOptions.typescript;
+          const isTypeScriptGoEnabled = applyTypeScriptPathCompat(
+            typescriptOptions,
+            projectTypescriptPaths,
+          );
 
-          if (
-            mergedOptions.typescript &&
-            !mergedOptions.typescript.typescriptPath
-          ) {
-            const typeCheckerPackage = mergedOptions.typescript.tsgo
-              ? '@typescript/native-preview'
-              : 'typescript';
+          if (typescriptOptions && !typescriptOptions.typescriptPath) {
+            const typeCheckerPackage = isTypeScriptGoEnabled
+              ? TYPESCRIPT_PREVIEW_PACKAGE
+              : TYPESCRIPT_PACKAGE;
             logger.warn(
               `"${typeCheckerPackage}" is not found in current project, Type checker will not work.`,
             );
@@ -169,7 +258,7 @@ export const pluginTypeCheck = (
 
           if (isProd) {
             logger.info(
-              mergedOptions.typescript?.tsgo
+              isTypeScriptGoEnabled
                 ? 'Type checker is enabled.'
                 : 'Type checker is enabled. It may take some time. You can enable `typescript.tsgo` to speed up type checking.',
             );

@@ -117,12 +117,13 @@ const defaultOptions = {
     memoryLimit: 8192,
     // use tsconfig of user project
     configFile: tsconfigPath,
-    // use TypeScript checker by default
-    tsgo: false,
-    // use typescript of user project
-    typescriptPath: tsgo
-      ? require.resolve('@typescript/native-preview/package.json')
-      : require.resolve('typescript'),
+    // use TypeScript Go automatically when TypeScript 7+ is installed
+    tsgo: typescriptMajorVersion >= 7 ? true : false,
+    // use TypeScript of user project
+    typescriptPath:
+      typescriptMajorVersion >= 7
+        ? require.resolve('typescript/package.json')
+        : require.resolve('typescript'),
   },
   issue: {
     // ignore types errors from node_modules
@@ -142,9 +143,22 @@ const defaultOptions = {
 
 #### TypeScript Go support
 
-TypeScript Go support is powered by `ts-checker-rspack-plugin`'s experimental, CLI-based integration for [typescript-go](https://github.com/microsoft/typescript-go). It runs the `tsgo` binary for type checking and can reduce type-checking time by about 5-10x.
+TypeScript Go support is powered by `ts-checker-rspack-plugin`'s experimental, CLI-based integration for [typescript-go](https://github.com/microsoft/typescript-go). It runs the TypeScript Go checker binary for type checking and can reduce type-checking time by about 5-10x.
 
-To enable it, install `@typescript/native-preview` and set `typescript.tsgo` to `true`:
+Install TypeScript 7.0 RC to use TypeScript Go automatically:
+
+```sh
+# with npm
+npm install -D typescript@rc
+
+# with yarn
+yarn add -D typescript@rc
+
+# with pnpm
+pnpm add -D typescript@rc
+```
+
+You can also install `@typescript/native-preview` and set `typescript.tsgo` to `true`:
 
 ```ts
 pluginTypeCheck({
@@ -156,7 +170,9 @@ pluginTypeCheck({
 });
 ```
 
-When `tsgo` is enabled, the default `typescript.typescriptPath` resolves to `@typescript/native-preview/package.json`. If you set `typescript.typescriptPath` manually in `tsgo` mode, it must be an absolute path to `@typescript/native-preview/package.json`.
+When `tsgo` is enabled, `typescript.typescriptPath` must point to an absolute `typescript/package.json` path from TypeScript 7+ or `@typescript/native-preview/package.json`. If TypeScript 7+ is not installed, the default path falls back to `@typescript/native-preview/package.json`.
+
+> The `@typescript/native-preview` usage is deprecated and kept only for compatibility. We recommend installing `typescript@rc` to use `tsgo`.
 
 For supported options and limitations, see [ts-checker-rspack-plugin - TypeScript Go support](https://github.com/rstackjs/ts-checker-rspack-plugin#typescript-go-support).
 
