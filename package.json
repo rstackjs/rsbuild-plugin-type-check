@@ -35,7 +35,7 @@
     "deepmerge": "^4.3.1",
     "json5": "^2.2.3",
     "reduce-configs": "^1.1.2",
-    "ts-checker-rspack-plugin": "^1.4.0"
+    "ts-checker-rspack-plugin": "^1.5.0"
   },
   "devDependencies": {
     "@playwright/test": "^1.61.0",

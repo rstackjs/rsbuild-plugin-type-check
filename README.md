@@ -117,11 +117,11 @@ const defaultOptions = {
     memoryLimit: 8192,
     // use tsconfig of user project
     configFile: tsconfigPath,
-    // use TypeScript checker by default
-    tsgo: false,
-    // use typescript of user project
-    typescriptPath: tsgo
-      ? require.resolve('@typescript/native-preview/package.json')
+    // use TypeScript Go automatically when TypeScript 7+ is installed
+    tsgo: isTypeScript7OrAbove,
+    // use TypeScript of user project
+    typescriptPath: isTypeScript7OrAbove
+      ? require.resolve('typescript/package.json')
       : require.resolve('typescript'),
   },
   issue: {
@@ -144,7 +144,9 @@ const defaultOptions = {
 
 TypeScript Go support is powered by `ts-checker-rspack-plugin`'s experimental, CLI-based integration for [typescript-go](https://github.com/microsoft/typescript-go). It runs the `tsgo` binary for type checking and can reduce type-checking time by about 5-10x.
 
-To enable it, install `@typescript/native-preview` and set `typescript.tsgo` to `true`:
+When TypeScript 7+ is installed in the project, TypeScript Go is enabled automatically via `typescript/package.json`.
+
+To use the legacy `@typescript/native-preview` package instead, install it and set `typescript.tsgo` to `true`:
 
 ```ts
 pluginTypeCheck({
@@ -156,7 +158,7 @@ pluginTypeCheck({
 });
 ```
 
-When `tsgo` is enabled, the default `typescript.typescriptPath` resolves to `@typescript/native-preview/package.json`. If you set `typescript.typescriptPath` manually in `tsgo` mode, it must be an absolute path to `@typescript/native-preview/package.json`.
+When `tsgo` is enabled and TypeScript 7+ is not installed, the default `typescript.typescriptPath` resolves to `@typescript/native-preview/package.json`. If you set `typescript.typescriptPath` manually in `tsgo` mode, it must be an absolute path to `typescript/package.json` from TypeScript 7+ or `@typescript/native-preview/package.json`.
 
 For supported options and limitations, see [ts-checker-rspack-plugin - TypeScript Go support](https://github.com/rstackjs/ts-checker-rspack-plugin#typescript-go-support).
 

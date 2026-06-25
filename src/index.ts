@@ -25,6 +25,43 @@ const resolveProjectPackage = (
   }
 };
 
+const resolveProjectTypeScript = (
+  rootPath: string,
+): { tsgo: boolean; typescriptPath: string } | undefined => {
+  const packageJsonPath = resolveProjectPackage(
+    'typescript/package.json',
+    rootPath,
+  );
+
+  if (packageJsonPath) {
+    try {
+      const { version } = JSON.parse(
+        fs.readFileSync(packageJsonPath, 'utf-8'),
+      ) as { version?: string };
+
+      if (Number(version?.split('.')[0]) >= 7) {
+        return {
+          tsgo: true,
+          typescriptPath: packageJsonPath,
+        };
+      }
+    } catch {
+      // fallback to the classic TypeScript API resolution below
+    }
+  }
+
+  const typescriptPath = resolveProjectPackage('typescript', rootPath);
+
+  if (typescriptPath) {
+    return {
+      tsgo: false,
+      typescriptPath,
+    };
+  }
+
+  return undefined;
+};
+
 export type PluginTypeCheckerOptions = {
   /**
    * Whether to enable TypeScript type checking.
@@ -96,8 +133,7 @@ export const pluginTypeCheck = (
           const useReference =
             Array.isArray(references) && references.length > 0;
           // use typescript of user project
-          const projectTypescriptPath = resolveProjectPackage(
-            'typescript',
+          const projectTypescript = resolveProjectTypeScript(
             api.context.rootPath,
           );
           const projectTsgoPath = resolveProjectPackage(
@@ -116,9 +152,9 @@ export const pluginTypeCheck = (
               memoryLimit: 8192,
               // use tsconfig of user project
               configFile: tsconfigPath,
-              tsgo: false,
+              tsgo: projectTypescript?.tsgo ?? false,
               // use typescript of user project
-              typescriptPath: projectTypescriptPath,
+              typescriptPath: projectTypescript?.typescriptPath,
             },
             issue: {
               // ignore types errors from node_modules
@@ -149,7 +185,9 @@ export const pluginTypeCheck = (
           if (
             mergedOptions.typescript &&
             mergedOptions.typescript.tsgo &&
-            mergedOptions.typescript.typescriptPath === projectTypescriptPath
+            mergedOptions.typescript.typescriptPath ===
+              projectTypescript?.typescriptPath &&
+            !projectTypescript?.tsgo
           ) {
             mergedOptions.typescript.typescriptPath = projectTsgoPath;
           }
