@@ -22,7 +22,6 @@ type ProjectTypeScriptPaths = {
   packageJsonPath?: string;
   previewPackageJsonPath?: string;
   supportsTsgo: boolean;
-  defaultPath?: string;
 };
 
 const TYPESCRIPT_PACKAGE = 'typescript';
@@ -85,11 +84,10 @@ const resolveProjectTypeScriptPaths = (
     packageJsonPath,
     previewPackageJsonPath,
     supportsTsgo,
-    defaultPath: supportsTsgo ? packageJsonPath : typescriptPath,
   };
 };
 
-const applyTypeScriptPathCompat = (
+const applyTypeScriptDefaults = (
   typescriptOptions: TypeScriptOptions | undefined,
   projectPaths: ProjectTypeScriptPaths,
 ): boolean => {
@@ -101,38 +99,34 @@ const applyTypeScriptPathCompat = (
   const normalizedOptions =
     typescriptOptions as TypeScriptOptionsWithTsgoPackage;
 
-  if (
-    typescriptOptions.tsgo === false &&
-    configuredPath === projectPaths.packageJsonPath
-  ) {
-    typescriptOptions.typescriptPath = projectPaths.typescriptPath;
-  } else if (
-    typescriptOptions.tsgo !== false &&
-    projectPaths.supportsTsgo &&
-    (configuredPath === projectPaths.typescriptPath ||
-      configuredPath === projectPaths.packageJsonPath ||
-      configuredPath === TYPESCRIPT_PACKAGE ||
-      configuredPath === TYPESCRIPT_PACKAGE_JSON)
-  ) {
-    typescriptOptions.typescriptPath = projectPaths.packageJsonPath;
-    typescriptOptions.tsgo ??= true;
-    normalizedOptions.tsgoPackage ??= 'typescript';
-  } else if (
-    typescriptOptions.tsgo &&
-    !projectPaths.supportsTsgo &&
-    (!configuredPath ||
-      configuredPath === projectPaths.typescriptPath ||
-      configuredPath === TYPESCRIPT_PACKAGE)
-  ) {
-    typescriptOptions.typescriptPath = projectPaths.previewPackageJsonPath;
-    normalizedOptions.tsgoPackage ??= 'preview';
+  if (configuredPath) {
+    return (
+      Boolean(typescriptOptions.tsgo) ||
+      (typescriptOptions.tsgo !== false &&
+        isTypeScriptGoSupportedPackage(configuredPath))
+    );
   }
 
-  return (
-    Boolean(typescriptOptions.tsgo) ||
-    (typescriptOptions.tsgo !== false &&
-      isTypeScriptGoSupportedPackage(typescriptOptions.typescriptPath))
-  );
+  if (typescriptOptions.tsgo === false) {
+    typescriptOptions.typescriptPath = projectPaths.typescriptPath;
+    return false;
+  }
+
+  if (projectPaths.supportsTsgo) {
+    typescriptOptions.typescriptPath = projectPaths.packageJsonPath;
+    typescriptOptions.tsgo = true;
+    normalizedOptions.tsgoPackage = 'typescript';
+    return true;
+  }
+
+  if (typescriptOptions.tsgo === true) {
+    typescriptOptions.typescriptPath = projectPaths.previewPackageJsonPath;
+    normalizedOptions.tsgoPackage = 'preview';
+    return true;
+  }
+
+  typescriptOptions.typescriptPath = projectPaths.typescriptPath;
+  return false;
 };
 
 export type PluginTypeCheckerOptions = {
@@ -220,9 +214,6 @@ export const pluginTypeCheck = (
               memoryLimit: 8192,
               // use tsconfig of user project
               configFile: tsconfigPath,
-              // use TypeScript of user project.
-              // TypeScript 7+ must point to package.json.
-              typescriptPath: projectTypescriptPaths.defaultPath,
             },
             issue: {
               // ignore types errors from node_modules
@@ -250,7 +241,7 @@ export const pluginTypeCheck = (
           });
 
           const typescriptOptions = mergedOptions.typescript;
-          const isTypeScriptGoEnabled = applyTypeScriptPathCompat(
+          const isTypeScriptGoEnabled = applyTypeScriptDefaults(
             typescriptOptions,
             projectTypescriptPaths,
           );

@@ -48,11 +48,3 @@ const expectTypeScriptError = async (
 test('should type check with TypeScript v7 RC', async () => {
   await expectTypeScriptError();
 });
-
-test('should type check with TypeScript v7 RC and package specifier path', async () => {
-  await expectTypeScriptError({
-    typescript: {
-      typescriptPath: 'typescript',
-    },
-  });
-});
