@@ -42,11 +42,11 @@ const resolveProjectPackage = (
   }
 };
 
-const isTypeScriptGoSupportedPackage = (
+const getTypeScriptGoPackage = (
   packageJsonPath: string | undefined,
-): boolean => {
+): TypeScriptGoPackage | undefined => {
   if (!packageJsonPath) {
-    return false;
+    return undefined;
   }
 
   try {
@@ -55,15 +55,27 @@ const isTypeScriptGoSupportedPackage = (
       typeof packageJson.version === 'string' ? packageJson.version : '';
     const versionMatch = version.match(/^(\d+)\.(\d+)(?:\.|$|-)/);
 
-    return (
+    if (
       packageJson.name === TYPESCRIPT_PACKAGE &&
-      Boolean(versionMatch) &&
+      versionMatch &&
       Number(versionMatch[1]) >= 7
-    );
+    ) {
+      return 'typescript';
+    }
+
+    if (packageJson.name === TYPESCRIPT_PREVIEW_PACKAGE) {
+      return 'preview';
+    }
+
+    return undefined;
   } catch {
-    return false;
+    return undefined;
   }
 };
+
+const isTypeScriptGoSupportedPackage = (
+  packageJsonPath: string | undefined,
+): boolean => getTypeScriptGoPackage(packageJsonPath) === 'typescript';
 
 const resolveProjectTypeScriptPaths = (
   rootPath: string,
@@ -100,11 +112,17 @@ const applyTypeScriptDefaults = (
     typescriptOptions as TypeScriptOptionsWithTsgoPackage;
 
   if (configuredPath) {
-    return (
-      Boolean(typescriptOptions.tsgo) ||
-      (typescriptOptions.tsgo !== false &&
-        isTypeScriptGoSupportedPackage(configuredPath))
-    );
+    const tsgoPackage = getTypeScriptGoPackage(configuredPath);
+
+    if (typescriptOptions.tsgo === undefined && tsgoPackage === 'typescript') {
+      typescriptOptions.tsgo = true;
+    }
+
+    if (typescriptOptions.tsgo === true && tsgoPackage) {
+      normalizedOptions.tsgoPackage = tsgoPackage;
+    }
+
+    return Boolean(typescriptOptions.tsgo);
   }
 
   if (typescriptOptions.tsgo === false) {
