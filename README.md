@@ -117,13 +117,8 @@ const defaultOptions = {
     memoryLimit: 8192,
     // use tsconfig of user project
     configFile: tsconfigPath,
-    // use TypeScript Go automatically when TypeScript 7+ is installed
-    tsgo: typescriptMajorVersion >= 7 ? true : false,
-    // use TypeScript of user project
-    typescriptPath:
-      typescriptMajorVersion >= 7
-        ? require.resolve('typescript/package.json')
-        : require.resolve('typescript'),
+    // resolve the default TypeScript package from user project
+    resolveRoot: api.context.rootPath,
   },
   issue: {
     // ignore types errors from node_modules
@@ -135,7 +130,11 @@ const defaultOptions = {
       // we only want to display error messages
     },
     error(message: string) {
-      console.error(message.replace(/ERROR/g, 'Type Error'));
+      console.error(
+        message
+          .replace(/ERROR/g, 'Type Error')
+          .replace(/WARNING/g, 'Type Warning'),
+      );
     },
   },
 };
@@ -170,7 +169,7 @@ pluginTypeCheck({
 });
 ```
 
-When `tsgo` is enabled, `typescript.typescriptPath` must point to an absolute `typescript/package.json` path from TypeScript 7+ or `@typescript/native-preview/package.json`. If TypeScript 7+ is not installed, the default path falls back to `@typescript/native-preview/package.json`.
+When `tsgo` is enabled and `typescript.typescriptPath` is set manually, it must point to an absolute `typescript/package.json` path from TypeScript 7+ or `@typescript/native-preview/package.json`.
 
 > The `@typescript/native-preview` usage is deprecated and kept only for compatibility. We recommend installing `typescript@rc` to use `tsgo`.
 

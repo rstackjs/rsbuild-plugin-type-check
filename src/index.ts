@@ -1,151 +1,13 @@
 import fs from 'node:fs';
-import { createRequire } from 'node:module';
 import type { RsbuildPlugin } from '@rsbuild/core';
 import deepmerge from 'deepmerge';
 import json5 from 'json5';
 import { type ConfigChain, reduceConfigs } from 'reduce-configs';
 import { TsCheckerRspackPlugin } from 'ts-checker-rspack-plugin';
 
-const require = createRequire(import.meta.url);
-
 type TsCheckerOptions = NonNullable<
   ConstructorParameters<typeof TsCheckerRspackPlugin>[0]
 >;
-type TypeScriptGoPackage = 'typescript' | 'preview';
-type TypeScriptOptions = NonNullable<TsCheckerOptions['typescript']>;
-type TypeScriptOptionsWithTsgoPackage = TypeScriptOptions & {
-  tsgoPackage?: TypeScriptGoPackage;
-};
-
-type ProjectTypeScriptPaths = {
-  typescriptPath?: string;
-  packageJsonPath?: string;
-  previewPackageJsonPath?: string;
-  supportsTsgo: boolean;
-};
-
-const TYPESCRIPT_PACKAGE = 'typescript';
-const TYPESCRIPT_PACKAGE_JSON = `${TYPESCRIPT_PACKAGE}/package.json`;
-const TYPESCRIPT_PREVIEW_PACKAGE = '@typescript/native-preview';
-const TYPESCRIPT_PREVIEW_PACKAGE_JSON = `${TYPESCRIPT_PREVIEW_PACKAGE}/package.json`;
-
-const resolveProjectPackage = (
-  packageName: string,
-  rootPath: string,
-): string | undefined => {
-  try {
-    return require.resolve(packageName, {
-      paths: [rootPath],
-    });
-  } catch {
-    return undefined;
-  }
-};
-
-const getTypeScriptGoPackage = (
-  packageJsonPath: string | undefined,
-): TypeScriptGoPackage | undefined => {
-  if (!packageJsonPath) {
-    return undefined;
-  }
-
-  try {
-    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
-    const version =
-      typeof packageJson.version === 'string' ? packageJson.version : '';
-    const versionMatch = version.match(/^(\d+)\.(\d+)(?:\.|$|-)/);
-
-    if (
-      packageJson.name === TYPESCRIPT_PACKAGE &&
-      versionMatch &&
-      Number(versionMatch[1]) >= 7
-    ) {
-      return 'typescript';
-    }
-
-    if (packageJson.name === TYPESCRIPT_PREVIEW_PACKAGE) {
-      return 'preview';
-    }
-
-    return undefined;
-  } catch {
-    return undefined;
-  }
-};
-
-const isTypeScriptGoSupportedPackage = (
-  packageJsonPath: string | undefined,
-): boolean => getTypeScriptGoPackage(packageJsonPath) === 'typescript';
-
-const resolveProjectTypeScriptPaths = (
-  rootPath: string,
-): ProjectTypeScriptPaths => {
-  const typescriptPath = resolveProjectPackage(TYPESCRIPT_PACKAGE, rootPath);
-  const packageJsonPath = resolveProjectPackage(
-    TYPESCRIPT_PACKAGE_JSON,
-    rootPath,
-  );
-  const previewPackageJsonPath = resolveProjectPackage(
-    TYPESCRIPT_PREVIEW_PACKAGE_JSON,
-    rootPath,
-  );
-  const supportsTsgo = isTypeScriptGoSupportedPackage(packageJsonPath);
-
-  return {
-    typescriptPath,
-    packageJsonPath,
-    previewPackageJsonPath,
-    supportsTsgo,
-  };
-};
-
-const applyTypeScriptDefaults = (
-  typescriptOptions: TypeScriptOptions | undefined,
-  projectPaths: ProjectTypeScriptPaths,
-): boolean => {
-  if (!typescriptOptions) {
-    return false;
-  }
-
-  const configuredPath = typescriptOptions.typescriptPath;
-  const normalizedOptions =
-    typescriptOptions as TypeScriptOptionsWithTsgoPackage;
-
-  if (configuredPath) {
-    const tsgoPackage = getTypeScriptGoPackage(configuredPath);
-
-    if (typescriptOptions.tsgo === undefined && tsgoPackage === 'typescript') {
-      typescriptOptions.tsgo = true;
-    }
-
-    if (typescriptOptions.tsgo === true && tsgoPackage) {
-      normalizedOptions.tsgoPackage = tsgoPackage;
-    }
-
-    return Boolean(typescriptOptions.tsgo);
-  }
-
-  if (typescriptOptions.tsgo === false) {
-    typescriptOptions.typescriptPath = projectPaths.typescriptPath;
-    return false;
-  }
-
-  if (projectPaths.supportsTsgo) {
-    typescriptOptions.typescriptPath = projectPaths.packageJsonPath;
-    typescriptOptions.tsgo = true;
-    normalizedOptions.tsgoPackage = 'typescript';
-    return true;
-  }
-
-  if (typescriptOptions.tsgo === true) {
-    typescriptOptions.typescriptPath = projectPaths.previewPackageJsonPath;
-    normalizedOptions.tsgoPackage = 'preview';
-    return true;
-  }
-
-  typescriptOptions.typescriptPath = projectPaths.typescriptPath;
-  return false;
-};
 
 export type PluginTypeCheckerOptions = {
   /**
@@ -217,9 +79,6 @@ export const pluginTypeCheck = (
           );
           const useReference =
             Array.isArray(references) && references.length > 0;
-          const projectTypescriptPaths = resolveProjectTypeScriptPaths(
-            api.context.rootPath,
-          );
 
           const defaultOptions: TsCheckerOptions = {
             typescript: {
@@ -232,6 +91,8 @@ export const pluginTypeCheck = (
               memoryLimit: 8192,
               // use tsconfig of user project
               configFile: tsconfigPath,
+              // resolve the default TypeScript package from user project
+              resolveRoot: api.context.rootPath,
             },
             issue: {
               // ignore types errors from node_modules
@@ -258,28 +119,8 @@ export const pluginTypeCheck = (
             mergeFn: deepmerge,
           });
 
-          const typescriptOptions = mergedOptions.typescript;
-          const isTypeScriptGoEnabled = applyTypeScriptDefaults(
-            typescriptOptions,
-            projectTypescriptPaths,
-          );
-
-          if (typescriptOptions && !typescriptOptions.typescriptPath) {
-            const typeCheckerPackage = isTypeScriptGoEnabled
-              ? TYPESCRIPT_PREVIEW_PACKAGE
-              : TYPESCRIPT_PACKAGE;
-            logger.warn(
-              `"${typeCheckerPackage}" is not found in current project, Type checker will not work.`,
-            );
-            return;
-          }
-
           if (isProd) {
-            logger.info(
-              isTypeScriptGoEnabled
-                ? 'Type checker is enabled.'
-                : 'Type checker is enabled. It may take some time. You can enable `typescript.tsgo` to speed up type checking.',
-            );
+            logger.info('Type checker is enabled.');
           }
 
           chain
