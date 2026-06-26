@@ -1,29 +1,13 @@
 import fs from 'node:fs';
-import { createRequire } from 'node:module';
 import type { RsbuildPlugin } from '@rsbuild/core';
 import deepmerge from 'deepmerge';
 import json5 from 'json5';
 import { type ConfigChain, reduceConfigs } from 'reduce-configs';
 import { TsCheckerRspackPlugin } from 'ts-checker-rspack-plugin';
 
-const require = createRequire(import.meta.url);
-
 type TsCheckerOptions = NonNullable<
   ConstructorParameters<typeof TsCheckerRspackPlugin>[0]
 >;
-
-const resolveProjectPackage = (
-  packageName: string,
-  rootPath: string,
-): string | undefined => {
-  try {
-    return require.resolve(packageName, {
-      paths: [rootPath],
-    });
-  } catch {
-    return undefined;
-  }
-};
 
 export type PluginTypeCheckerOptions = {
   /**
@@ -95,15 +79,6 @@ export const pluginTypeCheck = (
           );
           const useReference =
             Array.isArray(references) && references.length > 0;
-          // use typescript of user project
-          const projectTypescriptPath = resolveProjectPackage(
-            'typescript',
-            api.context.rootPath,
-          );
-          const projectTsgoPath = resolveProjectPackage(
-            '@typescript/native-preview/package.json',
-            api.context.rootPath,
-          );
 
           const defaultOptions: TsCheckerOptions = {
             typescript: {
@@ -116,9 +91,8 @@ export const pluginTypeCheck = (
               memoryLimit: 8192,
               // use tsconfig of user project
               configFile: tsconfigPath,
-              tsgo: false,
-              // use typescript of user project
-              typescriptPath: projectTypescriptPath,
+              // resolve the default TypeScript package from user project
+              resolveRoot: api.context.rootPath,
             },
             issue: {
               // ignore types errors from node_modules
@@ -145,34 +119,8 @@ export const pluginTypeCheck = (
             mergeFn: deepmerge,
           });
 
-          // Switch the plugin-provided TypeScript path for tsgo after user options are merged.
-          if (
-            mergedOptions.typescript &&
-            mergedOptions.typescript.tsgo &&
-            mergedOptions.typescript.typescriptPath === projectTypescriptPath
-          ) {
-            mergedOptions.typescript.typescriptPath = projectTsgoPath;
-          }
-
-          if (
-            mergedOptions.typescript &&
-            !mergedOptions.typescript.typescriptPath
-          ) {
-            const typeCheckerPackage = mergedOptions.typescript.tsgo
-              ? '@typescript/native-preview'
-              : 'typescript';
-            logger.warn(
-              `"${typeCheckerPackage}" is not found in current project, Type checker will not work.`,
-            );
-            return;
-          }
-
           if (isProd) {
-            logger.info(
-              mergedOptions.typescript?.tsgo
-                ? 'Type checker is enabled.'
-                : 'Type checker is enabled. It may take some time. You can enable `typescript.tsgo` to speed up type checking.',
-            );
+            logger.info('Type checker is enabled.');
           }
 
           chain
