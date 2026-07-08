@@ -1,9 +1,9 @@
 {
-  "name": "@e2e/typescript-v7-rc",
+  "name": "@e2e/typescript-v7",
   "private": true,
   "type": "module",
   "devDependencies": {
     "@rsbuild/plugin-type-check": "workspace:*",
-    "typescript": "7.0.1-rc"
+    "typescript": "^7.0.2"
   }
 }
