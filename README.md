@@ -140,11 +140,13 @@ const defaultOptions = {
 };
 ```
 
-#### TypeScript Go support
+#### TypeScript 7+ support
 
-TypeScript Go support is powered by `ts-checker-rspack-plugin`'s experimental, CLI-based integration for [typescript-go](https://github.com/microsoft/typescript-go). It runs the TypeScript Go checker binary for type checking and can reduce type-checking time by about 5-10x.
+`typescript.tsgo` uses the native checker included in TypeScript >= 7. It can reduce type-checking time on large projects.
 
-Install the latest TypeScript to use TypeScript Go automatically:
+When the configured or default installed `typescript` package is major version 7 or higher, `ts-checker-rspack-plugin` enables `typescript.tsgo` automatically and runs the native executable from that package. The default package detection uses `typescript.resolveRoot`, which this plugin points to the Rsbuild project root by default.
+
+Install TypeScript >= 7.0.0 to enable `tsgo` automatically:
 
 ```sh
 # with npm
@@ -157,23 +159,13 @@ yarn add -D typescript@latest
 pnpm add -D typescript@latest
 ```
 
-You can also install `@typescript/native-preview` and set `typescript.tsgo` to `true`:
+When `typescript.tsgo: true` is set without a custom `typescriptPath` and TypeScript 7+ is not installed, `ts-checker-rspack-plugin` falls back to `@typescript/native-preview` for compatibility.
 
-```ts
-pluginTypeCheck({
-  tsCheckerOptions: {
-    typescript: {
-      tsgo: true,
-    },
-  },
-});
-```
+When `tsgo` is enabled and `typescript.typescriptPath` is set manually, it must point to an absolute TypeScript 7+ `typescript/package.json` path or the legacy `@typescript/native-preview/package.json`.
 
-When `tsgo` is enabled and `typescript.typescriptPath` is set manually, it must point to an absolute `typescript/package.json` path from TypeScript 7+ or `@typescript/native-preview/package.json`.
+> The `@typescript/native-preview` path is kept only for compatibility. New setups should use TypeScript 7+ from the standard `typescript` package.
 
-> The `@typescript/native-preview` usage is deprecated and kept only for compatibility. We recommend installing `typescript@latest` to use `tsgo`.
-
-For supported options and limitations, see [ts-checker-rspack-plugin - TypeScript Go support](https://github.com/rstackjs/ts-checker-rspack-plugin#typescript-go-support).
+For supported options and limitations, see [ts-checker-rspack-plugin - TypeScript 7+ support](https://github.com/rstackjs/ts-checker-rspack-plugin#typescript-7-support).
 
 #### Object Type
 
