@@ -1,9 +1,11 @@
 packages:
   - .
-  - test/typescript-v7-rc
+  - test/typescript-v7
 
 allowBuilds:
   core-js: false
   simple-git-hooks: false
 minimumReleaseAgeExclude:
+  - '@typescript/*'
+  - typescript
   - ts-checker-rspack-plugin
