@@ -142,7 +142,7 @@ const defaultOptions = {
 
 #### TypeScript 7+ support
 
-TypeScript 7+ support is powered by `ts-checker-rspack-plugin`'s native checker integration. It runs the native TypeScript checker executable and can reduce type-checking time by about 5-10x on large projects.
+TypeScript 7+ support is powered by `ts-checker-rspack-plugin`'s native checker integration. It runs the native TypeScript checker executable and can reduce type-checking time on large projects.
 
 Install TypeScript >= 7.0.0 to enable `tsgo` automatically:
 
