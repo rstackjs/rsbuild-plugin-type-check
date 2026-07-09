@@ -144,8 +144,6 @@ const defaultOptions = {
 
 `typescript.tsgo` uses the native checker included in TypeScript >= 7. It can reduce type-checking time on large projects.
 
-When the configured or default installed `typescript` package is major version 7 or higher, `ts-checker-rspack-plugin` enables `typescript.tsgo` automatically and runs the native executable from that package. The default package detection uses `typescript.resolveRoot`, which this plugin points to the Rsbuild project root by default.
-
 Install TypeScript >= 7.0.0 to enable `tsgo` automatically:
 
 ```sh
