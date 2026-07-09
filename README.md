@@ -140,11 +140,11 @@ const defaultOptions = {
 };
 ```
 
-#### TypeScript Go support
+#### TypeScript 7+ support
 
-TypeScript Go support is powered by `ts-checker-rspack-plugin`'s experimental, CLI-based integration for [typescript-go](https://github.com/microsoft/typescript-go). It runs the TypeScript Go checker binary for type checking and can reduce type-checking time by about 5-10x.
+TypeScript 7+ support is powered by `ts-checker-rspack-plugin`'s native checker integration. It runs the native TypeScript checker executable and can reduce type-checking time on large projects.
 
-Install the latest TypeScript to use TypeScript Go automatically:
+Install TypeScript >= 7.0.0 to enable `tsgo` automatically:
 
 ```sh
 # with npm
@@ -157,23 +157,11 @@ yarn add -D typescript@latest
 pnpm add -D typescript@latest
 ```
 
-You can also install `@typescript/native-preview` and set `typescript.tsgo` to `true`:
+When `tsgo` is enabled and `typescript.typescriptPath` is set manually, it must point to an absolute TypeScript 7+ `typescript/package.json` path or the legacy `@typescript/native-preview/package.json`.
 
-```ts
-pluginTypeCheck({
-  tsCheckerOptions: {
-    typescript: {
-      tsgo: true,
-    },
-  },
-});
-```
+> The `@typescript/native-preview` path is kept only for compatibility. New setups should use TypeScript 7+ from the standard `typescript` package.
 
-When `tsgo` is enabled and `typescript.typescriptPath` is set manually, it must point to an absolute `typescript/package.json` path from TypeScript 7+ or `@typescript/native-preview/package.json`.
-
-> The `@typescript/native-preview` usage is deprecated and kept only for compatibility. We recommend installing `typescript@latest` to use `tsgo`.
-
-For supported options and limitations, see [ts-checker-rspack-plugin - TypeScript Go support](https://github.com/rstackjs/ts-checker-rspack-plugin#typescript-go-support).
+For supported options and limitations, see [ts-checker-rspack-plugin - TypeScript 7+ support](https://github.com/rstackjs/ts-checker-rspack-plugin#typescript-7-support).
 
 #### Object Type
 
