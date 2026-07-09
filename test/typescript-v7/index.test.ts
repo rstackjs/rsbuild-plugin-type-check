@@ -45,6 +45,6 @@ const expectTypeScriptError = async (
   }
 };
 
-test('should type check with TypeScript v7 RC', async () => {
+test('should type check with TypeScript v7 latest', async () => {
   await expectTypeScriptError();
 });

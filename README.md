@@ -144,17 +144,17 @@ const defaultOptions = {
 
 TypeScript Go support is powered by `ts-checker-rspack-plugin`'s experimental, CLI-based integration for [typescript-go](https://github.com/microsoft/typescript-go). It runs the TypeScript Go checker binary for type checking and can reduce type-checking time by about 5-10x.
 
-Install TypeScript 7.0 RC to use TypeScript Go automatically:
+Install the latest TypeScript to use TypeScript Go automatically:
 
 ```sh
 # with npm
-npm install -D typescript@rc
+npm install -D typescript@latest
 
 # with yarn
-yarn add -D typescript@rc
+yarn add -D typescript@latest
 
 # with pnpm
-pnpm add -D typescript@rc
+pnpm add -D typescript@latest
 ```
 
 You can also install `@typescript/native-preview` and set `typescript.tsgo` to `true`:
@@ -171,7 +171,7 @@ pluginTypeCheck({
 
 When `tsgo` is enabled and `typescript.typescriptPath` is set manually, it must point to an absolute `typescript/package.json` path from TypeScript 7+ or `@typescript/native-preview/package.json`.
 
-> The `@typescript/native-preview` usage is deprecated and kept only for compatibility. We recommend installing `typescript@rc` to use `tsgo`.
+> The `@typescript/native-preview` usage is deprecated and kept only for compatibility. We recommend installing `typescript@latest` to use `tsgo`.
 
 For supported options and limitations, see [ts-checker-rspack-plugin - TypeScript Go support](https://github.com/rstackjs/ts-checker-rspack-plugin#typescript-go-support).
 
