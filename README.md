@@ -142,7 +142,7 @@ const defaultOptions = {
 
 #### TypeScript 7+ support
 
-`typescript.tsgo` uses the native checker included in TypeScript >= 7. It can reduce type-checking time on large projects.
+TypeScript 7+ support is powered by `ts-checker-rspack-plugin`'s native checker integration. It runs the native TypeScript checker executable and can reduce type-checking time by about 5-10x on large projects.
 
 Install TypeScript >= 7.0.0 to enable `tsgo` automatically:
 
@@ -156,8 +156,6 @@ yarn add -D typescript@latest
 # with pnpm
 pnpm add -D typescript@latest
 ```
-
-When `typescript.tsgo: true` is set without a custom `typescriptPath` and TypeScript 7+ is not installed, `ts-checker-rspack-plugin` falls back to `@typescript/native-preview` for compatibility.
 
 When `tsgo` is enabled and `typescript.typescriptPath` is set manually, it must point to an absolute TypeScript 7+ `typescript/package.json` path or the legacy `@typescript/native-preview/package.json`.
 
