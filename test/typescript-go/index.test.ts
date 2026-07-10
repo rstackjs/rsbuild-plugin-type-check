@@ -1,6 +1,6 @@
 import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { expect, test } from '@playwright/test';
+import { expect, test } from '@rstest/playwright';
 import { createRsbuild } from '@rsbuild/core';
 import { pluginTypeCheck } from '@rsbuild/plugin-type-check';
 import { proxyConsole } from '../helper';

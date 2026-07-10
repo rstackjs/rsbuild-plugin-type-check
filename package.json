@@ -26,7 +26,7 @@
     "lint": "rslint && prettier -c .",
     "lint:write": "rslint --fix && prettier -w .",
     "prepare": "simple-git-hooks",
-    "test": "playwright test"
+    "test": "rstest"
   },
   "simple-git-hooks": {
     "pre-commit": "pnpm run lint:write"
@@ -38,10 +38,11 @@
     "ts-checker-rspack-plugin": "^1.5.1"
   },
   "devDependencies": {
-    "@playwright/test": "^1.61.1",
     "@rsbuild/core": "^2.1.2",
     "@rslib/core": "^0.23.1",
     "@rslint/core": "^0.6.4",
+    "@rstest/core": "^0.11.1",
+    "@rstest/playwright": "^0.11.1",
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^24.13.2",
     "@typescript/native-preview": "7.0.0-dev.20260630.1",
