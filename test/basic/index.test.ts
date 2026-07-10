@@ -79,39 +79,51 @@ test('should throw error when exist type errors in dev mode', async ({
 test('should display error in overlay when exist type errors in dev mode', async ({
   page,
 }) => {
+  const originalNodeEnv = process.env.NODE_ENV;
   process.env.NODE_ENV = 'development';
   const { restore } = proxyConsole();
 
-  const rsbuild = await createRsbuild({
-    cwd: __dirname,
-    rsbuildConfig: {
-      plugins: [pluginTypeCheck()],
-      server: {
-        port: getRandomPort(),
+  try {
+    const rsbuild = await createRsbuild({
+      cwd: __dirname,
+      rsbuildConfig: {
+        plugins: [pluginTypeCheck()],
+        server: {
+          port: getRandomPort(),
+        },
       },
-    },
-  });
+    });
 
-  const { server, urls } = await rsbuild.startDevServer();
+    const { server, urls } = await rsbuild.startDevServer();
 
-  await new Promise((resolve) => setTimeout(resolve, 1000));
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
-  await page.goto(urls[0]);
+      await page.goto(urls[0]);
 
-  const OVERLAY_ID = 'rsbuild-error-overlay';
-  await page.waitForSelector(OVERLAY_ID, { state: 'attached' });
-  const errorOverlay = page.locator(OVERLAY_ID);
+      const OVERLAY_ID = 'rsbuild-error-overlay';
+      await page.waitForSelector(OVERLAY_ID, { state: 'attached' });
+      const errorOverlay = page.locator(OVERLAY_ID);
 
-  const overlayContent = await errorOverlay.locator('.content').allInnerTexts();
-  expect(
-    overlayContent.find((txt) =>
-      stripVTControlCharacters(txt).includes('TS2345: Argument of type'),
-    ),
-  ).toBeDefined();
-
-  restore();
-  await server.close();
-  process.env.NODE_ENV = 'test';
+      const overlayContent = await errorOverlay
+        .locator('.content')
+        .allInnerTexts();
+      expect(
+        overlayContent.find((txt) =>
+          stripVTControlCharacters(txt).includes('TS2345: Argument of type'),
+        ),
+      ).toBeDefined();
+    } finally {
+      await server.close();
+    }
+  } finally {
+    restore();
+    if (originalNodeEnv === undefined) {
+      delete process.env.NODE_ENV;
+    } else {
+      process.env.NODE_ENV = originalNodeEnv;
+    }
+  }
 });
 
 test('should not throw error when the file is excluded', async () => {
