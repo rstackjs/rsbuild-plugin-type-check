@@ -1,6 +1,7 @@
 import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { stripVTControlCharacters } from 'node:util';
+import { rstest } from '@rstest/core';
 import { expect, test } from '@rstest/playwright';
 import { createRsbuild } from '@rsbuild/core';
 import { pluginTypeCheck } from '@rsbuild/plugin-type-check';
@@ -79,8 +80,7 @@ test('should throw error when exist type errors in dev mode', async ({
 test('should display error in overlay when exist type errors in dev mode', async ({
   page,
 }) => {
-  const originalNodeEnv = process.env.NODE_ENV;
-  process.env.NODE_ENV = 'development';
+  using _nodeEnv = rstest.stubEnv('NODE_ENV', 'development');
   const { restore } = proxyConsole();
 
   try {
@@ -118,11 +118,6 @@ test('should display error in overlay when exist type errors in dev mode', async
     }
   } finally {
     restore();
-    if (originalNodeEnv === undefined) {
-      delete process.env.NODE_ENV;
-    } else {
-      process.env.NODE_ENV = originalNodeEnv;
-    }
   }
 });
 
