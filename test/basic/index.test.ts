@@ -5,7 +5,7 @@ import { rstest } from '@rstest/core';
 import { expect, test } from '@rstest/playwright';
 import { createRsbuild } from '@rsbuild/core';
 import { pluginTypeCheck } from '@rsbuild/plugin-type-check';
-import { getRandomPort, proxyConsole } from '../helper';
+import { getRandomPort, proxyConsole } from '@rstackjs/test-utils';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -52,7 +52,7 @@ test('should throw error when exist type errors in dev mode', async ({
         }),
       ],
       server: {
-        port: getRandomPort(),
+        port: await getRandomPort(),
       },
     },
   });
@@ -89,7 +89,7 @@ test('should display error in overlay when exist type errors in dev mode', async
       rsbuildConfig: {
         plugins: [pluginTypeCheck()],
         server: {
-          port: getRandomPort(),
+          port: await getRandomPort(),
         },
       },
     });

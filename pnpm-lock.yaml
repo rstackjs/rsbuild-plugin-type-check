@@ -30,6 +30,9 @@ importers:
       '@rslint/core':
         specifier: ^0.6.4
         version: 0.6.4
+      '@rstackjs/test-utils':
+        specifier: ^0.2.0
+        version: 0.2.0
       '@rstest/core':
         specifier: ^0.11.1
         version: 0.11.1
@@ -517,6 +520,9 @@ packages:
 
   '@rspack/lite-tapable@1.1.2':
     resolution: {integrity: sha512-1OnyWChLGE46YzWyjlmYJssOu/Y0STAnnr2ueKPqDCYTf63GJMs0mxNnCul4dNiVqHYPKv3/fxrTY3IpqoVwZQ==}
+
+  '@rstackjs/test-utils@0.2.0':
+    resolution: {integrity: sha512-P+LOo1WE3xYeGkHmEthyq2cIpN69k4LhiB/4UBSceD+nW9hDlhWv8MC0LTLWokZXccWl4ntcfOBjQFllkcBlPA==}
 
   '@rstest/core@0.11.1':
     resolution: {integrity: sha512-9iJnDrM/zYuHyk1//CMr/Jer2XughgN3fYagGb1YWpMLUke+E+WXlUPgACwf7OkmIB47/TttbLFK+4zwGDNOFg==}
@@ -1291,6 +1297,8 @@ snapshots:
       '@swc/helpers': 0.5.23
 
   '@rspack/lite-tapable@1.1.2': {}
+
+  '@rstackjs/test-utils@0.2.0': {}
 
   '@rstest/core@0.11.1':
     dependencies:

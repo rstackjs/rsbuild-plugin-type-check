@@ -10,3 +10,4 @@ minimumReleaseAgeExclude:
   - typescript
   - ts-checker-rspack-plugin
   - '@rstest/*'
+  - '@rstackjs/*'
