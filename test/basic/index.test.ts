@@ -5,7 +5,7 @@ import { rstest } from '@rstest/core';
 import { expect, test } from '@rstest/playwright';
 import { createRsbuild } from '@rsbuild/core';
 import { pluginTypeCheck } from '@rsbuild/plugin-type-check';
-import { getRandomPort, proxyConsole } from '../helper';
+import { getRandomPort, proxyConsole } from '@rstackjs/test-utils';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 

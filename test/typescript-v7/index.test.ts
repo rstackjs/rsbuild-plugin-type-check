@@ -7,7 +7,7 @@ import {
   pluginTypeCheck,
   type PluginTypeCheckerOptions,
 } from '@rsbuild/plugin-type-check';
-import { proxyConsole } from '../helper';
+import { proxyConsole } from '@rstackjs/test-utils';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const require = createRequire(import.meta.url);

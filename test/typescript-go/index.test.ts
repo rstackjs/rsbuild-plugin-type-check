@@ -3,7 +3,7 @@ import { fileURLToPath } from 'node:url';
 import { expect, test } from '@rstest/playwright';
 import { createRsbuild } from '@rsbuild/core';
 import { pluginTypeCheck } from '@rsbuild/plugin-type-check';
-import { proxyConsole } from '../helper';
+import { proxyConsole } from '@rstackjs/test-utils';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
