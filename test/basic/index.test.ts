@@ -52,7 +52,7 @@ test('should throw error when exist type errors in dev mode', async ({
         }),
       ],
       server: {
-        port: getRandomPort(),
+        port: await getRandomPort(),
       },
     },
   });
@@ -89,7 +89,7 @@ test('should display error in overlay when exist type errors in dev mode', async
       rsbuildConfig: {
         plugins: [pluginTypeCheck()],
         server: {
-          port: getRandomPort(),
+          port: await getRandomPort(),
         },
       },
     });
