@@ -6,8 +6,15 @@ allowBuilds:
   core-js: false
   simple-git-hooks: false
 minimumReleaseAgeExclude:
-  - '@typescript/*'
-  - typescript
-  - ts-checker-rspack-plugin
-  - '@rstest/*'
+  - '@rsbuild/*'
+  - '@rslib/*'
+  - '@rslint/*'
+  - '@rspack/*'
+  - '@rspress/*'
   - '@rstackjs/*'
+  - '@rstest/*'
+  - '@typescript/*'
+  - 'rsbuild-plugin-*'
+  - rstack
+  - ts-checker-rspack-plugin
+  - typescript
