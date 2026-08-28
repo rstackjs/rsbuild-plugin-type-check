@@ -18,6 +18,3 @@ minimumReleaseAgeExclude:
   - rstack
   - ts-checker-rspack-plugin
   - typescript
-
-overrides:
-  '@rspack/core': 2.2.1
