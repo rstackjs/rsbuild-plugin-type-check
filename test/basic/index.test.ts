@@ -1,4 +1,6 @@
-import { dirname } from 'node:path';
+import { existsSync } from 'node:fs';
+import { readdir, rm } from 'node:fs/promises';
+import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { stripVTControlCharacters } from 'node:util';
 import { rstest } from '@rstest/core';
@@ -19,7 +21,7 @@ test('should throw error when exist type errors', async () => {
     },
   });
 
-  await expect(rsbuild.build()).rejects.toThrowError('build failed');
+  await expect(rsbuild.build()).rejects.toThrow('build failed');
 
   expect(
     logs.find((log) => log.includes('File:') && log.includes('/src/index.ts')),
@@ -34,6 +36,33 @@ test('should throw error when exist type errors', async () => {
   ).toBeTruthy();
 
   restore();
+});
+
+test('should not emit assets when exist type errors', async () => {
+  const { restore } = proxyConsole();
+  const distPath = join(__dirname, 'dist');
+
+  await rm(distPath, { recursive: true, force: true });
+
+  try {
+    const rsbuild = await createRsbuild({
+      cwd: __dirname,
+      rsbuildConfig: {
+        plugins: [pluginTypeCheck()],
+      },
+    });
+
+    await expect(rsbuild.build()).rejects.toThrow('build failed');
+
+    const outputFiles = existsSync(distPath)
+      ? await readdir(distPath, { recursive: true })
+      : [];
+
+    expect(outputFiles).not.toContain('index.html');
+    expect(outputFiles.some((file) => file.endsWith('.js'))).toBe(false);
+  } finally {
+    restore();
+  }
 });
 
 test('should throw error when exist type errors in dev mode', async ({

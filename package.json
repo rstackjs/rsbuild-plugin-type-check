@@ -38,7 +38,7 @@
     "ts-checker-rspack-plugin": "^1.6.0"
   },
   "devDependencies": {
-    "@rsbuild/core": "^2.1.11",
+    "@rsbuild/core": "^2.2.0",
     "@rslib/core": "^0.23.2",
     "@rslint/core": "^0.8.0",
     "@rstackjs/test-utils": "^0.2.0",
