@@ -1,11 +1,11 @@
 {
   "name": "@rsbuild/plugin-type-check",
   "version": "1.6.0",
-  "repository": "https://github.com/rstackjs/rsbuild-plugin-type-check",
   "homepage": "https://github.com/rstackjs/rsbuild-plugin-type-check#readme",
   "bugs": {
     "url": "https://github.com/rstackjs/rsbuild-plugin-type-check/issues"
   },
+  "repository": "https://github.com/rstackjs/rsbuild-plugin-type-check",
   "license": "MIT",
   "type": "module",
   "exports": {
@@ -20,16 +20,14 @@
     "dist"
   ],
   "scripts": {
-    "build": "rslib",
-    "bump": "npx bumpp",
-    "dev": "rslib -w",
-    "lint": "rslint && prettier -c .",
-    "lint:write": "rslint --fix && prettier -w .",
-    "prepare": "simple-git-hooks",
-    "test": "rstest"
-  },
-  "simple-git-hooks": {
-    "pre-commit": "pnpm run lint:write"
+    "build": "rs lib",
+    "bump": "pnpx bumpp",
+    "check": "rs check",
+    "dev": "rs lib -w",
+    "format": "rs fmt",
+    "lint": "rs lint",
+    "prepare": "rs hooks",
+    "test": "rs test"
   },
   "dependencies": {
     "deepmerge": "^4.3.1",
@@ -39,18 +37,14 @@
   },
   "devDependencies": {
     "@rsbuild/core": "^2.2.1",
-    "@rslib/core": "^0.23.2",
-    "@rslint/core": "^0.9.0",
     "@rstackjs/test-utils": "^0.2.0",
-    "@rstest/core": "^0.11.11",
     "@rstest/playwright": "^0.11.11",
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^24.13.3",
     "@typescript/native-preview": "7.0.0-dev.20260707.2",
     "fs-extra": "^11.4.0",
     "playwright": "^1.62.1",
-    "prettier": "^3.9.6",
-    "simple-git-hooks": "^2.14.0",
+    "rstack": "^0.7.1",
     "typescript": "^7.0.2"
   },
   "peerDependencies": {
