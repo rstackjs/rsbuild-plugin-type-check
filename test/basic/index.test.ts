@@ -3,11 +3,11 @@ import { readdir, rm } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { stripVTControlCharacters } from 'node:util';
-import { rstest } from '@rstest/core';
 import { expect, test } from '@rstest/playwright';
 import { createRsbuild } from '@rsbuild/core';
 import { pluginTypeCheck } from '@rsbuild/plugin-type-check';
 import { getRandomPort, proxyConsole } from '@rstackjs/test-utils';
+import { rstest } from 'rstack/test';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
