@@ -33,18 +33,18 @@
     "deepmerge": "^4.3.1",
     "json5": "^2.2.3",
     "reduce-configs": "^1.1.2",
-    "ts-checker-rspack-plugin": "^1.6.1"
+    "ts-checker-rspack-plugin": "^1.6.2"
   },
   "devDependencies": {
-    "@rsbuild/core": "^2.2.6",
+    "@rsbuild/core": "^2.2.12",
     "@rstackjs/test-utils": "^1.0.0",
-    "@rstest/playwright": "^0.11.12",
+    "@rstest/playwright": "^0.12.3",
     "@types/fs-extra": "^11.0.4",
-    "@types/node": "^24.13.4",
+    "@types/node": "^24.19.1",
     "@typescript/native-preview": "7.0.0-dev.20260707.2",
-    "fs-extra": "^11.4.0",
-    "playwright": "^1.63.0",
-    "rstack": "^0.7.4",
+    "fs-extra": "^11.4.1",
+    "playwright": "^1.64.0",
+    "rstack": "^0.8.1",
     "typescript": "^7.0.2"
   },
   "peerDependencies": {
@@ -59,7 +59,7 @@
       "optional": true
     }
   },
-  "packageManager": "pnpm@11.27.0",
+  "packageManager": "pnpm@11.28.5",
   "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/"
