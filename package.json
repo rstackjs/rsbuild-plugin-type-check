@@ -1,6 +1,6 @@
 {
   "name": "@rsbuild/plugin-type-check",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "homepage": "https://github.com/rstackjs/rsbuild-plugin-type-check#readme",
   "bugs": {
     "url": "https://github.com/rstackjs/rsbuild-plugin-type-check/issues"
