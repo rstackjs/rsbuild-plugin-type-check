@@ -15,8 +15,8 @@ importers:
         specifier: ^2.2.3
         version: 2.2.3
       reduce-configs:
-        specifier: ^1.1.2
-        version: 1.1.2
+        specifier: ^2.0.1
+        version: 2.0.1
       ts-checker-rspack-plugin:
         specifier: ^1.7.1
         version: 1.7.1(@rspack/core@2.2.9(@swc/helpers@0.5.23))(@typescript/native-preview@7.0.0-dev.20260707.2)(typescript@7.0.2)
@@ -983,8 +983,8 @@ packages:
     resolution: {integrity: sha512-GDhwkLfywWL2s6vEjyhri+eXmfH6j1L7JE27WhqLeYzoh/A3DBaYGEj2H/HFZCn/kMfim73FXxEJTw06WtxQwg==}
     engines: {node: '>= 14.18.0'}
 
-  reduce-configs@1.1.2:
-    resolution: {integrity: sha512-AgBP55V8FC7NaqoOP2RCbTpu6LE+YuX3LUZkNAoitcfyS3/PIC8Obg/TJrBzTkJ+lDvZv0TTAeDpLkzjTtYlbw==}
+  reduce-configs@2.0.1:
+    resolution: {integrity: sha512-H9KTCWTEb1YM1OoOz0f6TeGZYlW82sIT1viNg3W8CjjY0pD3WI4MHs8GifKt5FKTVIfHh/DenfJqqY+FP9jF2A==}
 
   rsbuild-plugin-dts@1.0.3:
     resolution: {integrity: sha512-wVxMYvWmVPam6SeZsz8OixHm+4JPfLJAAMTD0Q2te2SxksvjuHC3wuvU12teSmloQ3nFX1YC6guNzuYqDYw+vQ==}
@@ -1260,8 +1260,8 @@ snapshots:
 
   '@rslib/core@1.0.3(typescript@7.0.2)':
     dependencies:
-      '@rsbuild/core': 2.2.12
-      rsbuild-plugin-dts: 1.0.3(@rsbuild/core@2.2.12)(typescript@7.0.2)
+      '@rsbuild/core': 2.2.13
+      rsbuild-plugin-dts: 1.0.3(@rsbuild/core@2.2.13)(typescript@7.0.2)
     optionalDependencies:
       typescript: 7.0.2
     transitivePeerDependencies:
@@ -1742,12 +1742,12 @@ snapshots:
 
   readdirp@4.1.2: {}
 
-  reduce-configs@1.1.2: {}
+  reduce-configs@2.0.1: {}
 
-  rsbuild-plugin-dts@1.0.3(@rsbuild/core@2.2.12)(typescript@7.0.2):
+  rsbuild-plugin-dts@1.0.3(@rsbuild/core@2.2.13)(typescript@7.0.2):
     dependencies:
       '@ast-grep/napi': 0.45.3
-      '@rsbuild/core': 2.2.12
+      '@rsbuild/core': 2.2.13
     optionalDependencies:
       typescript: 7.0.2
 
