@@ -17,3 +17,8 @@ minimumReleaseAgeExclude:
   - rstack
   - ts-checker-rspack-plugin
   - typescript
+
+permissions:
+  rstack:
+    skills:
+      - rstack-cli-docs
